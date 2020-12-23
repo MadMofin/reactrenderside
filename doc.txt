@@ -1,0 +1,38 @@
+Para agregar nodemon a nuestro proyecto se necesita los siguientes comandos en el package.json
+    
+    "dev:build:server": "webpack --config webpack.server.js --watch"
+    "dev:build:client": "webpack --config webpack.client.js --watch"
+
+CREAR UN BUNDLE PARA EL CLIENTE
+
+1.- Cambiamos todo a ES2015.
+
+2.- Creamos el archivo de cliente en cliente (client.js).
+
+3.- Para hacer ahora un bundle para nuestro cliente es necesario hacer otro webpack file, lo hacemos
+al mismo nivel del servidor (webpack). Cambiamos la ruta a donde lo vamos a guardar, ahora lo 
+vamos a guardar en la carpeta public para que todos puedan acceder a ella y le quitamos el target 
+porque ahora no va a ser node.
+
+4.- Como el bundle tiene código que ya tenemos repetido, lo limpiamos creando un webpack base en donde
+vamos a pasar las rules y las vamos a exportar, una vez teniendolo vamos a quitarlas de nuestros otros
+webpack para despues importarlas y con ayuda de webpack-merge vamos a unirlas para crear el webpack.
+
+5.- Vamos a hacer que todo corra con un solo comando, para eso vamos a utilizar la librería de 
+npm-run-al, creamos nuestro script final de esta manera:
+    
+    "dev": "npm-run-all --parallel dev:*"
+    
+6.- Ahora vamos a limpiar nuestro index.js, creamos unaa carpeta de helpers con un archivo de renderer.js
+ahi vamos a pasar todo el código que va a regresar a nuestro front, creamos una funcion y la exportamos
+
+7.- En nuestro index.js vamos a importar renderer y lo retornamos en nuestra respuesta al front.
+
+8.- Creamos un archivo en nuestro cliente que va a tener todas las rutas, ahí importamos todo los 
+componentes que vayamos a necesitar
+
+9.- Ahora en nuestro archivo de cliente cambiamos el componente de home y lo sustituimos con nuestro
+archivo de rutas con ayuda del BrowserRouter
+
+10.- Cambiamos la version del react-router-dom 
+
