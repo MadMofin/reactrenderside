@@ -36,3 +36,159 @@ archivo de rutas con ayuda del BrowserRouter
 
 10.- Cambiamos la version del react-router-dom 
 
+INSTALAR REDUX 
+
+11.- Vamos a client.js e importamos lo siguiente: 
+
+{ createStore, applyMiddleware } => 'redux'
+*createStore es una función que nos va a servir para inicializar el store del redux,
+es donde va a estar la información del state.
+*applyMiddleware es un middleware que nos sirve para usar otros middlewares.
+
+{ thunk } => 'redux-thunk'
+*thunk es el 'puente' que nos va a ayudar a pasar información de manera asincrona a nuestra store,
+ademas de que agrega otras funcionalidades.
+
+{ Provider } => 'react-redux';
+*Provider es simplemente nuestro provider, es quien nos va a dejar manipular la store que 
+acabamos de crear.
+
+12. Creamos la store con la funcion que acabamos de importar, los parametros que se requieren son:
+ 
+    (reducers, {}, applyMiddleware(thunk)) 
+
+    reducers: Van a ser todos los reducers que vamos a necesitar,
+    {}: Es mi initialState,
+    applyMiddleware(thunk): Pasamos un middleware para poder utilizar thunk
+ 
+13. Una vez creada nuestra Store, vamos a hacer un wrapping a nuestras rutas con el provider,
+así mismo pasamos la store como un atributo de nuestro provider.
+
+14. Vamos a crear la función que se encargará de crear la store, vamos a crearla dentro de nuestra
+carpeta de helpers.
+
+15. Importaremos lo siguiente:
+
+{ createStore, applyMiddleware } => 'redux'
+{ thunk } => 'redux-thunk'
+
+16. Creamos nuestra función de la misma manera como lo hicimos en nuestro cliente y hacemos que 
+la funcion retorne ese valor.
+
+17. Vamos a ir ahora a nuestro archivo index.js en donde vamos a importar la función que acabamos
+de crear:
+
+createStore => './helpers/createStore'
+
+18. En nuestra ruta global (donde usamos '*') vamos a crear una nueva store con nuestra función y
+la vamos a pasar como segundo parametro en nuestro metodo de renderer.
+
+19. Ahora en nuestra funcion de renderer que ya teniamos creada vamos a recibir nuestro nuevo 
+parametro y procederemos a hacer un wrapping de nuestras rutas estaticas pasando el atributo de store
+con el parametro nuevo que estamos recibiendo.
+
+20. Creamos una carpeta para nuestros reducers en nuestro cliente, en ella vamos a crear unarchivo que 
+va a ser nuestro primer endpoint para hacerle un get a unos usuarios.
+
+21. Asi mismo creamos una carpeta para tener todas nuestras acciones, (como types en hooks),
+vamos primero a importar axios para poder hacer peticiones asincronas, creaos ahi mismo el "type"
+que vamos a necesitar y creamos nuestra funcion fetchUsers que recibe como parametro el distpatch
+
+22. Hacemos la petición al endpoint con axios y le creamos su distpatch con type y payload como
+de costumbre.
+
+23. Ahora vamos a crear el componente que necesitamos para poder mostrar la lista de usuarios, vamos
+a crear un componente de tipo clase, y vamos a importar lo siguiente:
+
+{ connect } => 'react-redux'
+*Connect como su nombre lo dice va a ayudarnos a hacer la conexion del componente con los datos
+que obtendremos del endpoint (store).
+
+{ fetchUser } from '../actions'
+
+24. Procedemos a crear una funcion que va a recibir a nuestro state como parametro, esto para que
+nos mapee los usuarios que vamos a obtener.
+
+25. Ahora al momento de exportar nuestro componente hace falta hacerlo de una manera expecial
+
+    export default connect(mapStateToProps, { fetchUsers })(UserList);
+
+    connect: Va a hacer el match de los datos que necesitamos del store (mapStateToProps),
+    los datos que vamos a obtener de fetchUsers (endpoint) y el componente en si.
+
+26. Creamos una funcion que nos va a regresar la lista con los datos que tiene nuestro state, se
+va a crear de manera normal haciendo un map entre cada user que regresa un elemento en una lista
+
+27. Ahora para el life component cycle vamos a usar componentDidMount para hacer la petición
+cuando el componente se termine de montar
+
+28. Ahora por último vamos a usar un parche para que no muestre errores, vamos agregar 
+'babel-polyfill' a nuestro archivo de client.js y al index de source.
+
+29. Vamos a cambiar nuestro archivo de rutas ahora usando un arreglo, nuestro archivo de rutas actual
+retorna lo siguiente:
+
+    return (
+        <div>
+            <Route exact path='/' component={Home}/>
+            <Route exact path='/users' component={UserList}/>
+        </div>
+    )
+
+Ahora lo que vamos a hacer es exportar un arreglo que va a contener los atributos que necesite; como
+la ruta, componente, etc. nos va a quedar lo siguiente:
+
+    {   
+        path: "/",
+        component: Home,
+        exact: true
+    },
+    {
+        path: "/users",
+        component: UserList,
+    }
+
+
+30. Ahora vamos a tener que cambiar nuestro elemento de Routes que tenemos en nuestro archivo renderer
+y en client, importamos lo siguiente:
+
+    { renderRoutes } => 'react-router-dom'
+    *renderRoutes es una funcion que nos va a ayudar a renderizar las rutas
+
+Una vez importado vamos a cambiar el componente de <Routes /> por un div que va a contener nuestra
+funcion rendeRoutes y como parametros se van a pasar nuestras Rutas que ahora son un arreglo.
+
+31. Vamos a importar matchRoutes para ayudarnos a utilizar nuestras rutas
+    { matchRoutes } => 'react-router-config'
+
+Una vez importada vamos a agregarla a nuestro metodo get, como parametros matchRoutes requiere
+que se le pasen las Rutas, y el path que podemos encontrar en nuestro request (req) 
+
+31. Nos vamos a ir a nuestro componente de UserList y vamos a implementar una nueva función con el nombre de
+loadData, que por el momento solo vamos a consologuear un mensaje x, vamos a exportar tambien esta funcion.
+
+32. Vamos a ir de nuevo a index en donde ahora vamos a validar si nuestra ruta necesita una función para
+cargar datos del store, para esto vamos a necesitar mapear todas nuestras rutas, por lo tanto a nuestra
+funcion de matchRoutes le añadimos la funcion de map y retornamos la funcion en caso que la tenga, de
+lo contrario retornaremos null de la siguiente manera:
+
+    return route.loadData ? route.loadData() : null;
+
+33. Ahora, para poder hacer uso de la store, se la pasamos como parametro a la funcion de loadData 
+de la siguiente manera:
+
+    return route.loadData ? route.loadData(store) : null;
+
+34. Vamos a Userlist y a la funcion ahora le agregamos un atributo para que acepte nuestro nuevo
+parametro, dentro de esta funcion ahora vamos a retornar el dispatch, para eso con nuestra nueva
+variable de entrada y la funcion de fetchUsers de la siguiente manera:
+
+    return store.dispatch(fetchUsers());
+
+35. Ahora vamos a usar un metodo en nuestro index para que regrese la respuesta solo cuando todas las 
+promesas se hayan cumplido, para eso ocupamos el metodo all de la clase Promise, de la siguiente manera
+
+    Promise.all(promises).then(() => {
+        res.send(renderer(req, store));
+    });
+
